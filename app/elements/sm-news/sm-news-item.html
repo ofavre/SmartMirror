@@ -7,8 +7,35 @@
       :host {
         display: block;
       }
+      a:hover {
+        text-decoration: none;
+      }
       .sm-news-date {
         @apply(--paper-font-body1);
+      }
+      .news-item-title {
+        @apply(--paper-font-headline);
+        max-height: 4em;
+        overflow-y: hidden;
+      }
+      .news-item-content {
+        @apply(--layout-flex);
+        float: left;
+        height: 15em;
+        overflow-y: hidden;
+      }
+      .news-item-image {
+        background-size: cover;
+        background-position-x: 50%;
+        width: 100px;
+        opacity: .3;
+        transition: opacity .5s ease;
+      }
+      :host:hover .news-item-image {
+        opacity: 1;
+      }
+      paper-card.news-item {
+        @apply(--layout-horizontal);
       }
       paper-card {
         --paper-card-content: {
@@ -22,10 +49,15 @@
     </style>
 
     <a href="{{link}}">
-      <paper-card heading="{{title}}" image="{{enclosureUrl}}">
-        <div class="card-content">
-          <div class="sm-news-date">{{pubDate}}</div>
-          <div class="news-item-description">{{description}}</div>
+      <paper-card class="news-item">
+        <div class="news-item-content">
+          <div class="card-content">
+            <div class="news-item-title">{{title}}</div>
+            <div class="sm-news-date">{{pubDate}}</div>
+            <div class="news-item-description">{{description}}</div>
+          </div>
+        </div>
+        <div class="news-item-image" style="background-image: url('{{enclosureUrl}}');">
         </div>
       </paper-card>
     </a>
