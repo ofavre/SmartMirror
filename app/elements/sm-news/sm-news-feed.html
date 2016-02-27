@@ -86,7 +86,7 @@
           this.title = rss.querySelector('channel > title').innerHTML;
           this.image = rss.querySelector('channel > image > url').textContent;
           this.description = rss.querySelector('channel > description').innerHTML;
-          this.link = rss.querySelector('channel > link').textContent;
+          this.link = Array.prototype.slice.call(rss.querySelectorAll('channel > link')).filter(e => !e.namespaceURI)[0].textContent;
           this.items = Array.prototype.slice.call(rss.querySelectorAll('channel > item'));
         }
       });
