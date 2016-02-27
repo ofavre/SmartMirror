@@ -53,7 +53,7 @@
         <div class="news-item-content">
           <div class="card-content">
             <div class="news-item-title">{{title}}</div>
-            <div class="sm-news-date">{{pubDate}}</div>
+            <div class="sm-news-date">{{fromNow(pubDate)}}</div>
             <div class="news-item-description">{{description}}</div>
           </div>
         </div>
@@ -98,6 +98,11 @@
           var description = this.item.querySelector('description').textContent;
           this.description = new DOMParser().parseFromString(description, "text/html").body.textContent;
           this.pubDate = this.item.querySelector('pubDate').innerHTML;
+        },
+
+        fromNow: function(pubDate) {
+          //return pubDate;
+          return moment(new Date(pubDate)).fromNow();
         }
       });
     })();
