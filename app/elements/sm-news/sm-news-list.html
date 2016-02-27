@@ -1,0 +1,40 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="sm-news-list">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      span,
+      input {
+        @apply(--paper-font-body2);
+      }
+    </style>
+
+    <h2 class="page-title">News</h2>
+    <span>Read the latest news</span>
+    <template is="dom-repeat" items="{{urls}}" as="url">
+      <sm-news-feed url="{{url}}"></sm-news-feed>
+    </template>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'sm-news-list',
+
+        properties: {
+          urls: {
+            type: Array,
+            notify: true
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>

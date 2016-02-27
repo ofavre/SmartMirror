@@ -1,0 +1,23 @@
+BODY {
+  @apply(--paper-font-common-base);
+  font-family: sans-serif;
+  background-color: #000;
+  color: #fff;
+  font-size: 14px;
+}
+news-list {
+  display: block;
+}
+news-list > news {
+  display: block;
+  width: 25%;
+  margin: 1em;
+}
+news-list > news > title {
+  display: block;
+  font-size: 150%;
+  margin-bottom: .3em;
+}
+news-list > news > description {
+  display: block;
+}

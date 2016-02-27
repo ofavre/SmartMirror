@@ -1,0 +1,33 @@
+{
+  "name": "SmartMirror Web UI",
+  "authors": [
+    "Olivier Favre <of.olivier.favre@gmail.com>"
+  ],
+  "description": "A SmartMirror Web UI with voice control",
+  "main": [
+    "js/app.js",
+    "sass/app.scss"
+  ],
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.0",
+    "page": "visionmedia/page.js#~1.6.4",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.0",
+    "polymer-themes": "^1.0.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "^4.2.1"
+  }
+}

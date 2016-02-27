@@ -1,0 +1,95 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="sm-news-feed">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+      }
+
+      span {
+        @apply(--paper-font-body2);
+      }
+
+      .list {
+        display: block;
+        /*@apply(--layout-vertical);*/
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+      sm-news-item {
+        width: 300px;
+        margin: 6px;
+        @apply(--layout-flex-auto);
+        @apply(--self-stretch);
+      }
+    </style>
+
+    <iron-ajax auto
+        url="https://cors-anywhere.herokuapp.com/{{url}}"
+        handle-as="document"
+        on-response="handleResponse"
+        last-response="{{resp}}"></iron-ajax>
+
+    <a href="{{link}}">
+      <h3 class="news-feed-title">
+        <img src="{{image}}"/>
+        <span>{{title}}</span>
+      </h3>
+    </a>
+    <span>{{description}}</span>
+
+    <div class="list">
+      <template is="dom-repeat" items="{{items}}" as="item">
+        <sm-news-item item="{{item}}"></sm-news-item>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'sm-news-feed',
+
+        properties: {
+          url: {
+            type: String,
+            notify: true
+          },
+          title: {
+            type: String,
+            notify: true
+          },
+          description: {
+            type: String,
+            notify: true
+          },
+          link: {
+            type: String,
+            notify: true
+          },
+          items: {
+            type: Array,
+            notify: true,
+            value: function() {
+              return [];
+            }
+          }
+        },
+
+        handleResponse: function(event, ironRequest) {
+          var rss = ironRequest.response;
+          this.title = rss.querySelector('channel > title').innerHTML;
+          this.image = rss.querySelector('channel > image > url').textContent;
+          this.description = rss.querySelector('channel > description').innerHTML;
+          this.link = rss.querySelector('channel > link').textContent;
+          this.items = Array.prototype.slice.call(rss.querySelectorAll('channel > item'));
+        }
+      });
+    })();
+  </script>
+</dom-module>

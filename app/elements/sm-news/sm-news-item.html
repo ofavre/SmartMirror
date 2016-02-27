@@ -1,0 +1,73 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="sm-news-item">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+      .sm-news-date {
+        @apply(--paper-font-body1);
+      }
+      paper-card {
+        --paper-card-content: {
+          @apply(--paper-font-body2);
+        }
+        --paper-card-header-image-text: {
+          color: white;
+          text-shadow: black 0 0 2px, black 0 0 4px, black 0 0 6px, black 0 0 8px, black 0 0 24px;
+        }
+      }
+    </style>
+
+    <a href="{{link}}">
+      <paper-card heading="{{title}}" image="{{enclosureUrl}}">
+        <div class="card-content">
+          <div class="sm-news-date">{{pubDate}}</div>
+          <div class="news-item-description">{{description}}</div>
+        </div>
+      </paper-card>
+    </a>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'sm-news-item',
+
+        properties: {
+          item: {
+            type: Object,
+          },
+          link: {
+            type: String
+          },
+          enclosureUrl: {
+            type: String
+          },
+          title: {
+            type: String
+          },
+          description: {
+            type: String
+          },
+          pubDate: {
+            type: Date
+          }
+        },
+
+        ready: function() {
+          this.link = this.item.querySelector('link').textContent;
+          this.enclosureUrl = this.item.querySelector('enclosure').getAttribute('url');
+          this.title = this.item.querySelector('title').innerHTML;
+          var description = this.item.querySelector('description').textContent;
+          this.description = new DOMParser().parseFromString(description, "text/html").body.textContent;
+          this.pubDate = this.item.querySelector('pubDate').innerHTML;
+        }
+      });
+    })();
+  </script>
+</dom-module>
