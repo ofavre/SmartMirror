@@ -93,7 +93,8 @@
 
         ready: function() {
           this.link = this.item.querySelector('link').textContent;
-          this.enclosureUrl = this.item.querySelector('enclosure').getAttribute('url');
+          var enclosure = this.item.querySelector('enclosure');
+          this.enclosureUrl = enclosure && enclosure.getAttribute('url') || null;
           this.title = this.item.querySelector('title').innerHTML;
           var description = this.item.querySelector('description').textContent;
           this.description = new DOMParser().parseFromString(description, "text/html").body.textContent;
