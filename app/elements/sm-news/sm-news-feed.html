@@ -35,11 +35,16 @@
 
     <a href="{{link}}">
       <h3 class="news-feed-title">
-        <img src="{{image}}"/>
-        <span>{{title}}</span>
+        <template is="dom-if" if="{{!alias}}">
+          <img src="{{image}}"/>
+          <span>{{title}}</span>
+        </template>
+        <template is="dom-if" if="{{alias}}">
+          <span>{{alias}}</span>
+        </template>
       </h3>
     </a>
-    <span>{{description}}</span>
+    <!--span>{{description}}</span-->
 
     <div class="list">
       <template is="dom-repeat" items="{{items}}" as="item">
@@ -57,6 +62,10 @@
 
         properties: {
           url: {
+            type: String,
+            notify: true
+          },
+          alias: {
             type: String,
             notify: true
           },

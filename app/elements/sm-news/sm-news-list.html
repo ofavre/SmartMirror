@@ -15,9 +15,8 @@
     </style>
 
     <h2 class="page-title">News</h2>
-    <span>Read the latest news</span>
-    <template is="dom-repeat" items="{{urls}}" as="url">
-      <sm-news-feed url="{{url}}"></sm-news-feed>
+    <template is="dom-repeat" items="{{feeds}}" as="feed">
+    <sm-news-feed url="{{feed.url}}" alias="{{feed.alias}}"></sm-news-feed>
     </template>
   </template>
 
@@ -29,7 +28,7 @@
         is: 'sm-news-list',
 
         properties: {
-          urls: {
+          feeds: {
             type: Array,
             notify: true
           }

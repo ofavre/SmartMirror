@@ -7,7 +7,11 @@
   var app = document.querySelector('#app');
 
   app.feedUrls = [
-    "http://www.lemonde.fr/technologies/rss_full.xml"
+    { url: "http://www.lemonde.fr/pixels/rss_full.xml", alias: "Pixels - Le Monde" },
+    { url: "http://www.lemonde.fr/international/rss_full.xml", alias: "International - Le Monde" },
+    { url: "http://www.lemonde.fr/politique/rss_full.xml", alias: "Politique - Le Monde" },
+    { url: "http://www.lemonde.fr/economie/rss_full.xml", alias: "Économie - Le Monde" },
+    { url: "http://www.lemonde.fr/sciences/rss_full.xml", alias: "Sciences - Le Monde" },
   ];
 
 })(document);
