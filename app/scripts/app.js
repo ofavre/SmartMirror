@@ -37,7 +37,7 @@
     var link = event.path.filter(e => e.tagName == 'A')[0];
     var url = link.getAttribute('href');
     var toast = document.createElement('paper-toast');
-    document.body.appendChild(toast);
+    Polymer.dom(document.body).appendChild(toast);
     toast.show({ text: 'Opening link…', duration: Infinity });
     app.readableify(url).then(function(dataOrUrl) {
       toast.toggle();
@@ -47,13 +47,26 @@
         var data = dataOrUrl;
         console.log(data);
         var dialog = document.createElement('paper-dialog');
-        // TODO: use document.createElement('paper-dialog-scrollable')
-        dialog.innerHTML = '<h2>' + data.title + '</h2><div><paper-dialog-scrollable>' + data.content + '</paper-dialog-scrollable></div><div class="buttons"><paper-button dialog-confirm autofocus>OK</paper-button></div>';
         dialog.withBackdrop = true;
         dialog.entryAnimation = 'scale-up-animation';
         dialog.exitAnimation = 'scale-down-animation';
-        document.body.appendChild(dialog);
-        dialog.toggle();
+        var title = document.createElement('h2');
+        Polymer.dom(title).innerHTML = data.title;
+        Polymer.dom(dialog).appendChild(title);
+        var scrollable = document.createElement('paper-dialog-scrollable');
+        Polymer.dom(scrollable).innerHTML = data.content;
+        Polymer.dom(dialog).appendChild(scrollable);
+        var buttons = document.createElement('div');
+        Polymer.dom(buttons).classList.add('buttons');
+        Polymer.dom(dialog).appendChild(buttons);
+        var btnOk = document.createElement('paper-button');
+        btnOk.dialogDismiss = true;
+        btnOk.autofocus = true;
+        Polymer.dom(btnOk).textContent = 'OK';
+        Polymer.dom(buttons).appendChild(btnOk);
+        //dialog.innerHTML = '<h2>' + data.title + '</h2><paper-dialog-scrollable>' + data.content + '</paper-dialog-scrollable><div class="buttons"><paper-button dialog-confirm autofocus>OK</paper-button></div>';
+        Polymer.dom(document.body).appendChild(dialog);
+        dialog.open();
       }
     });
   };
