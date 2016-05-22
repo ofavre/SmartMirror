@@ -14,6 +14,15 @@
     { url: "http://www.lemonde.fr/sciences/rss_full.xml", alias: "Sciences - Le Monde" },
   ];
 
+  app.presentFullscreen = function(content) {
+    Polymer.dom(app.$.fullsizeCard).appendChild(content);
+    app.$.fullscreenPresenter.selected = 1;
+  };
+
+  app.cancelFullscreen = function() {
+    app.$.fullscreenPresenter.selected = 0;
+  };
+
   app.readableify = function(url) {
     return new Promise(function(resolve, reject) {
       jQuery.ajax({
@@ -32,41 +41,20 @@
     });
   };
 
-  app.onClickOpenReadableLink = function(event) {
+  app.onClickReturnReadableData = function(event) {
     event.preventDefault();
     var link = event.path.filter(e => e.tagName == 'A')[0];
     var url = link.getAttribute('href');
     var toast = document.createElement('paper-toast');
     Polymer.dom(document.body).appendChild(toast);
     toast.show({ text: 'Opening link…', duration: Infinity });
-    app.readableify(url).then(function(dataOrUrl) {
-      toast.toggle();
+    return app.readableify(url).then(function(dataOrUrl) {
+      toast.close();
       if (typeof dataOrUrl == 'string') {
-        window.location = url;
+        throw url;
       } else {
         var data = dataOrUrl;
-        console.log(data);
-        var dialog = document.createElement('paper-dialog');
-        dialog.withBackdrop = true;
-        dialog.entryAnimation = 'scale-up-animation';
-        dialog.exitAnimation = 'scale-down-animation';
-        var title = document.createElement('h2');
-        Polymer.dom(title).innerHTML = data.title;
-        Polymer.dom(dialog).appendChild(title);
-        var scrollable = document.createElement('paper-dialog-scrollable');
-        Polymer.dom(scrollable).innerHTML = data.content;
-        Polymer.dom(dialog).appendChild(scrollable);
-        var buttons = document.createElement('div');
-        Polymer.dom(buttons).classList.add('buttons');
-        Polymer.dom(dialog).appendChild(buttons);
-        var btnOk = document.createElement('paper-button');
-        btnOk.dialogDismiss = true;
-        btnOk.autofocus = true;
-        Polymer.dom(btnOk).textContent = 'OK';
-        Polymer.dom(buttons).appendChild(btnOk);
-        //dialog.innerHTML = '<h2>' + data.title + '</h2><paper-dialog-scrollable>' + data.content + '</paper-dialog-scrollable><div class="buttons"><paper-button dialog-confirm autofocus>OK</paper-button></div>';
-        Polymer.dom(document.body).appendChild(dialog);
-        dialog.open();
+        return data;
       }
     });
   };

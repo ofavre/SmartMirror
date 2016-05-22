@@ -46,9 +46,13 @@
           text-shadow: black 0 0 2px, black 0 0 4px, black 0 0 6px, black 0 0 8px, black 0 0 24px;
         }
       }
+      #fullscreenCard {
+        display: none;
+      }
     </style>
 
-    <a href="{{link}}" onclick="{{app.onClickOpenReadableLink(event);}}">
+    <!-- The article card -->
+    <a href="{{link}}" on-tap="openArticle">
       <paper-card class="news-item">
         <div class="news-item-content">
           <div class="card-content">
@@ -61,6 +65,16 @@
         </div>
       </paper-card>
     </a>
+    <!-- The article readable page -->
+    <div id="fullscreenCard">
+      <paper-card heading="{{readable.title}}">
+      <div class="card-content">
+        {{readable.content}}
+      </div>
+      <div class="card-actions">
+        <paper-button on-tap="appCancelFullscreen" autofocus>OK</paper-button>
+      </div>
+    </div>
   </template>
 
   <script>
@@ -88,7 +102,10 @@
           },
           pubDate: {
             type: Date
-          }
+          },
+          readable: {
+            type: Object
+          },
         },
 
         ready: function() {
@@ -104,7 +121,22 @@
         fromNow: function(pubDate) {
           //return pubDate;
           return moment(new Date(pubDate)).fromNow();
-        }
+        },
+
+        openArticle: function(event) {
+          var that = this;
+          app.onClickReturnReadableData(event).then(function(data) {
+            that.readable = data;
+            app.presentFullscreen(that.$.fullscreenCard);
+          }, function(url) {
+            window.location = url;
+          });
+        },
+
+        appCancelFullscreen: function() {
+          app.cancelFullscreen();
+        },
+
       });
     })();
   </script>

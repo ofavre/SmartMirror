@@ -31,6 +31,18 @@
 
   <!-- For shared styles, shared-styles.html import in elements.html -->
   <style is="custom-style" include="shared-styles"></style>
+  <style is="custom-style">
+    body {
+      overflow: hidden;
+      @apply(--layout-fullbleed);
+    }
+    .vert-scrollable {
+      overflow-y: scroll;
+    }
+    neon-animated-pages {
+      height: 100%;
+    }
+  </style>
 
   <title>SmartMirror UI</title>
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
@@ -40,8 +52,12 @@
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
 
-    <sm-news-list feeds="{{feedUrls}}">
-    </sm-news-list>
+    <neon-animated-pages id="fullscreenPresenter" selected="0">
+      <div class="vert-scrollable">
+        <sm-news-list feeds="{{feedUrls}}"></sm-news-list>
+      </div>
+      <fullsize-page-with-card id="fullsizeCard"></fullsize-page-with-card>
+    </neon-animated-pages>
   
   </template>
 
