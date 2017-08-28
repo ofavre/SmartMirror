@@ -25,6 +25,14 @@ var packageJson = require('./package.json');
 var crypto = require('crypto');
 var ensureFiles = require('./tasks/ensure-files.js');
 
+var cors = function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+};
+var url = require('url');
+var proxy = require('proxy-middleware');
+
+
 // var ghPages = require('gulp-gh-pages');
 
 var AUTOPREFIXER_BROWSERS = [
@@ -217,6 +225,11 @@ gulp.task('clean', function() {
 
 // Watch files for changes & reload
 gulp.task('serve', ['styles', 'elements'], function() {
+  console.log('Add CORS Proxy: http://stackoverflow.com/a/25986453');
+  console.log('and redirect XHR calls to it');
+  var proxyOptions = url.parse('http://localhost:5000/secret-api');
+  proxyOptions.route = '/api';
+  // requests to `/api/x/y/z` are proxied to `http://localhost:3000/secret-api`
   browserSync({
     port: 5000,
     notify: false,
@@ -235,7 +248,7 @@ gulp.task('serve', ['styles', 'elements'], function() {
     // https: true,
     server: {
       baseDir: ['.tmp', 'app'],
-      middleware: [historyApiFallback()]
+      middleware: [cors, proxy(proxyOptions), historyApiFallback()]
     }
   });
 
@@ -264,7 +277,7 @@ gulp.task('serve:dist', ['default'], function() {
     //       will present a certificate warning in the browser.
     // https: true,
     server: dist(),
-    middleware: [historyApiFallback()]
+    middleware: [cors, historyApiFallback()]
   });
 });
 

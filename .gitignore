@@ -3,3 +3,4 @@
 /.tmp/
 /dist/
 .*.swp
+/npm-debug.log
