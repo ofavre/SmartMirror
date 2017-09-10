@@ -1,15 +1,21 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Hello from '@/components/Hello';
+import NewsList from '@/components/news-list';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello,
+      name: 'news-list',
+      component: NewsList,
+      props() {
+        return {
+          feeds: router.app.feeds,
+        };
+      },
     },
   ],
 });
+export default router;
