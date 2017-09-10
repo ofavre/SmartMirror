@@ -14,6 +14,10 @@ const feeds = [
   // { url: 'http://www.lemonde.fr/sciences/rss_full.xml', alias: 'Sciences - Le Monde' },
 ];
 
+const weatherPlaces = [
+  '75000, FR',
+];
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -22,5 +26,6 @@ new Vue({
   components: { App },
   data: {
     feeds,
+    weatherPlaces,
   },
 });

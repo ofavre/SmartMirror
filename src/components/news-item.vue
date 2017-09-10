@@ -1,5 +1,5 @@
 <template>
-  <a class="no-decoration" :href="link" @click="openArticle">
+  <a class="no-decoration" :href="link" @click.prevent="openArticle">
     <v-card height="100%">
       <v-card-media :src="enclosureUrl" height="3em"></v-card-media>
       <v-card-title>

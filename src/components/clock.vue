@@ -10,8 +10,10 @@
 
   export default {
     name: 'clock',
-    data: {
-      intervalId: null,
+    data() {
+      return {
+        intervalId: null,
+      };
     },
     mounted() {
       this.intervalId = setInterval(() => {
