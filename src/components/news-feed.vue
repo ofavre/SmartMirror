@@ -6,7 +6,7 @@
     Error {{error}}
   </div>
   <div v-else>
-    <a :href="link">
+    <a class="no-decoration" :href="link">
       <h3 class="news-feed-title">
         <template v-if="!alias">
           <img :src="image"/>
@@ -19,9 +19,13 @@
     </a>
     <span>{{description}}</span>
 
-    <div class="list">
-      <news-item v-for="(item, index) in items" :item="item" :key="index"></news-item>
-    </div>
+    <v-container fluid grid-list-sm>
+      <v-layout row wrap>
+        <v-flex xs6 sm4 md2 v-for="(item, index) in items" :key="index">
+          <news-item class="item" :item="item"></news-item>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </div>
 </template>
 
@@ -63,13 +67,11 @@
             throw new Error(`Status ${response.status}`);
           }
           return response.text().then(text => new DOMParser().parseFromString(text, 'text/xml')).then((rss) => {
-            console.log(rss);
             this.title = rss.querySelector('channel > title').innerHTML;
             this.image = rss.querySelector('channel > image > url').textContent;
             this.description = rss.querySelector('channel > description').innerHTML;
             this.link = Array.prototype.slice.call(rss.querySelectorAll('channel > link')).filter(e => !e.namespaceURI)[0].textContent;
             this.items = Array.prototype.slice.call(rss.querySelectorAll('channel > item'));
-            console.log(this.items);
           });
         }).catch((error) => {
           this.error = error;
@@ -80,6 +82,10 @@
       },
     },
   };
-
-  // TODO AJAX
 </script>
+
+<style>
+  A.no-decoration {
+    text-decoration: none;
+  }
+</style>

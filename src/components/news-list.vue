@@ -1,6 +1,5 @@
 <template>
   <div class="news">
-    <h1>News</h1>
     <news-feed :url="feed.url" :alias="feed.alias" v-for="(feed, index) in feeds" :key="index"></news-feed>
   </div>
 </template>

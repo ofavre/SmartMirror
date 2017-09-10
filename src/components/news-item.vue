@@ -1,16 +1,15 @@
 <template>
-  <a :href="link" @click="openArticle">
-    <div class="paper-card news-item">
-      <div class="news-item-content">
-        <div class="card-content">
-          <div class="news-item-title">{{title}}</div>
-          <div class="sm-news-date">{{fromNow(pubDate)}}</div>
-          <div class="news-item-description">{{description}}</div>
-        </div>
-      </div>
-      <div class="news-item-image" :style="{backgroundImage: 'url('+enclosureUrl+')'}">
-      </div>
-    </div>
+  <a class="no-decoration" :href="link" @click="openArticle">
+    <v-card height="100%">
+      <v-card-media :src="enclosureUrl" height="3em"></v-card-media>
+      <v-card-title>
+        <div class="title news-item-title">{{title}}</div>
+        <div class="news-item-date">{{fromNow(pubDate)}}</div>
+      </v-card-title>
+      <v-card-text>
+        <div class="news-item-description">{{description}}</div>
+      </v-card-text>
+    </v-card>
   </a>
 </template>
 
@@ -53,3 +52,30 @@
     },
   };
 </script>
+
+<style>
+  A.no-decoration {
+    text-decoration: none;
+  }
+  .news-item-title {
+    margin-top: .25em;
+    max-height: 3em;
+    overflow-y: hidden;
+  }
+  .card__title {
+    position: relative;
+  }
+  .news-item-date {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  .card__text {
+    padding-top: 0 !important;
+  }
+  .news-item-description {
+    line-height: 1.1em;
+    max-height: 4em;
+    overflow-y: hidden;
+  }
+</style>
