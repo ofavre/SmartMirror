@@ -7,7 +7,12 @@
         <span class="weatherForecastItemInfo">{{item.FCTTIME.hour}}h</span>
         <span class="weatherForecastItemInfo">{{item.temp.metric}}&deg;C feels like {{item.feelslike.metric}}&deg;C</span>
         <span class="weatherForecastItemInfo">sky {{item.sky}}%</span>
-        <span class="weatherForecastItemInfo">wind {{item.wspd.metric}} km/h {{item.wdir.dir}}</span>
+        <div class="weatherForecastItemInfo">
+          <div class="weatherForecastItemInfoWind">
+            <img src="/static/winds-symbol.svg" :style="windStyle(item)"/>
+          </div>
+          {{item.wspd.metric}} <sup>km</sup>/<sub>h</sub>
+        </div>
         <span class="weatherForecastItemInfo">wx {{item.wx}}</span>
         <span class="weatherForecastItemInfo">UV index {{item.uvi}}</span>
         <span class="weatherForecastItemInfo">humidity {{item.humidity}}%</span>
@@ -70,6 +75,19 @@
         this.longitude = position.coords.longitude;
       });
     },
+    methods: {
+      windStyle(item) {
+        const maxSpeed = 30;
+        const scale = item.wspd.metric / maxSpeed;
+        const rotateOffset = 90; // depends on the chosen icon
+        return {
+          transform: [
+            `rotate(${parseFloat(item.wdir.degrees) + rotateOffset}deg)`,
+            `scale(${scale})`,
+          ].join(' '),
+        };
+      },
+    },
   };
 </script>
 
@@ -80,5 +98,14 @@
     min-width: 15em;
   }
   .weatherForecastItemInfo {
+  }
+  .weatherForecastItemInfoWind {
+    vertical-align: middle;
+    width: 4em;
+    height: 4em;
+    display: inline-block;
+  }
+  .weatherForecastItemInfoWind > img {
+    width: 100%;
   }
 </style>
