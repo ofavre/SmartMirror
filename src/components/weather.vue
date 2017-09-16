@@ -2,7 +2,7 @@
   <div>
     <ul class="weatherForecast" v-if="forecast !== null">
       <li class="weatherForecastItem" v-for="(item, index) in forecast.hourly_forecast" :key="index">
-        <span class="weatherForecastItemInfo"><img :src="'https://icons.wxug.com/i/c/i/'+item.icon+'.gif'"/></span>
+        <span class="weatherForecastItemInfo"><i :class="['wu', 'wu-white', 'wu-64', 'wu-'+item.icon]"></i></span>
         <span class="weatherForecastItemInfo">{{item.condition}}</span>
         <span class="weatherForecastItemInfo">{{item.FCTTIME.hour}}h</span>
         <span class="weatherForecastItemInfo">{{item.temp.metric}}&deg;C feels like {{item.feelslike.metric}}&deg;C</span>
@@ -22,6 +22,7 @@
 
 <script>
   import config from '@/config';
+  import 'weather-underground-icons/dist/wu-icons-style.min.css';
 
   const OWMApiKey = config.OWMApiKey;
   const WUApiKey = config.WUApiKey;
