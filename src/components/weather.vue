@@ -40,7 +40,7 @@
           </div>
           {{item.wspd.metric}} <sup>km</sup>/<sub>h</sub>
         </div>
-        <span class="weatherForecastItemInfo">UV index {{item.uvi}}</span>
+        <span class="weatherForecastItemInfo">UV: {{uvIndexLabel(item)}}</span>
         <span class="weatherForecastItemInfo">humidity {{item.humidity}}%</span>
         <div class="weatherForecastItemInfo">
           <div class="weatherForecastItemInfoRain">
@@ -139,6 +139,14 @@
         const qpfMm = item.qpf.english * mmPerIn; // use the english metric as it is more accurate
         const maxMm = 3;
         return qpfMm / maxMm;
+      },
+      uvIndexLabel(item) {
+        const uvi = parseInt(item.uvi, 10);
+        if (uvi <= 2) return 'Very Low';
+        if (uvi <= 4) return 'Low';
+        if (uvi <= 6) return 'Moderate';
+        if (uvi <= 9) return 'High';
+        return 'Very High';
       },
     },
   };
