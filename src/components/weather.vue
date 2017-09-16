@@ -1,5 +1,25 @@
 <template>
   <div>
+    <svg style="display:none;">
+      <defs>
+        <path id="drop-filled"
+          d="M413.289,200.718c-0.016-0.021-0.03-0.041-0.045-0.061C407.69,193.171,277.11,17.178,267.635,5.534
+                  c-2.918-3.587-7.379-5.634-11.949-5.53c-4.623,0.097-8.942,2.32-11.708,6.026L100.036,198.936
+                  C74.498,232.909,61,273.39,61,316.001c0,108.075,87.477,196,195,196s195-87.925,195-196
+                  C451,274.189,437.96,234.324,413.289,200.718z"
+        />
+        <path
+          id="drop-contour"
+          d="M413.289,200.718c-0.016-0.021-0.03-0.041-0.045-0.061C407.69,193.171,277.11,17.178,267.635,5.534
+                  c-2.918-3.587-7.379-5.634-11.949-5.53c-4.623,0.097-8.942,2.32-11.708,6.026L100.036,198.936
+                  C74.498,232.909,61,273.39,61,316.001c0,108.075,87.477,196,195,196s195-87.925,195-196
+                  C451,274.189,437.96,234.324,413.289,200.718z
+                  M256,482.001c-90.981,0-165-74.467-165-166c0-36.057,11.417-70.304,33.049-99.081
+                  l132.08-177.01c27.492,36.534,94.768,127.061,133.009,178.605C409.984,246.929,421,280.637,421,316.001
+                  C421,407.534,346.981,482.001,256,482.001z"
+        />
+      </defs>
+    </svg>
     <ul class="weatherForecast" v-if="forecast !== null">
       <li class="weatherForecastItem" v-for="(item, index) in forecast.hourly_forecast" :key="index">
         <span class="weatherForecastItemInfo"><i :class="['wu', 'wu-white', 'wu-64', 'wu-'+item.icon]"></i></span>
@@ -16,7 +36,28 @@
         <span class="weatherForecastItemInfo">wx {{item.wx}}</span>
         <span class="weatherForecastItemInfo">UV index {{item.uvi}}</span>
         <span class="weatherForecastItemInfo">humidity {{item.humidity}}%</span>
-        <span class="weatherForecastItemInfo">precipitations {{item.qpf.metric}} mm {{item.pop}}%</span>
+        <div class="weatherForecastItemInfo">
+          <div class="weatherForecastItemInfoRain">
+            <svg viewBox="0 0 512 512">
+              <defs>
+                <clipPath :id="`precipitations-${index}-down`">
+                  <rect x="0" :y="512 - rainScale(item) * 512" width="512" height="512"/>
+                </clipPath>
+                <clipPath :id="`precipitations-${index}-up`">
+                  <rect x="0" :y="0 - rainScale(item) * 512" width="512" height="512"/>
+                </clipPath>
+              </defs>
+              <use href="#drop-filled"
+                fill="#3390FF"
+                :clip-path="`url(#precipitations-${index}-down)`"
+              />
+              <use href="#drop-contour"
+                :clip-path="`url(#precipitations-${index}-up)`"
+                fill="#FFFFFF" fill-opacity="1"/>
+            </svg>
+          </div>
+          {{item.qpf.metric}}<small>mm</small> {{item.pop}}%
+        </div>
         <span class="weatherForecastItemInfo">snow {{item.snow.metric}} mm</span>
         <span class="weatherForecastItemInfo">pressure {{item.mslp.metric}} hPa</span>
       </li>
@@ -87,6 +128,12 @@
           ].join(' '),
         };
       },
+      rainScale(item) {
+        const mmPerIn = 25.4;
+        const qpfMm = item.qpf.english * mmPerIn; // use the english metric as it is more accurate
+        const maxMm = 3;
+        return qpfMm / maxMm;
+      },
     },
   };
 </script>
@@ -107,5 +154,11 @@
   }
   .weatherForecastItemInfoWind > img {
     width: 100%;
+  }
+  .weatherForecastItemInfoRain {
+    vertical-align: middle;
+    width: 2em;
+    height: 2em;
+    display: inline-block;
   }
 </style>
