@@ -25,14 +25,17 @@
         <span class="weatherForecastItemInfo"><i :class="['wu', 'wu-white', 'wu-64', 'wu-'+item.icon]"></i></span>
         <span class="weatherForecastItemInfo">{{item.condition}}</span>
         <span class="weatherForecastItemInfo">{{item.FCTTIME.hour}}h</span>
-        <span class="weatherForecastItemInfo">
-          <template v-if="item.temp.metric === item.feelslike.metric">
-            {{item.temp.metric}}&deg;C
-          </template>
-          <template v-else>
-            {{item.feelslike.metric}}&deg;C <small>({{item.temp.metric}}&deg;C)</small>
-          </template>
-        </span>
+        <div class="weatherForecastItemInfo">
+          <div class="weatherForecastItemInfoTemperature">
+            <img src="/static/temperature.svg"/>
+            <template v-if="item.temp.metric === item.feelslike.metric">
+              {{item.temp.metric}}&deg;C
+            </template>
+            <template v-else>
+              {{item.feelslike.metric}}&deg;C <small>({{item.temp.metric}}&deg;C)</small>
+            </template>
+          </div>
+        </div>
         <div class="weatherForecastItemInfo">
           <div class="weatherForecastItemInfoCloudiness">
             <img src="/static/cloud-filled.svg" :style="{opacity: parseFloat(item.sky)/100.}"/> {{item.sky}}%
@@ -44,8 +47,16 @@
           </div>
           {{item.wspd.metric}} <sup>km</sup>/<sub>h</sub>
         </div>
-        <span class="weatherForecastItemInfo">UV: {{uvIndexLabel(item)}}</span>
-        <span class="weatherForecastItemInfo">humidity {{item.humidity}}%</span>
+        <div class="weatherForecastItemInfo">
+          <div class="weatherForecastItemInfoUV">
+            <img src="/static/uv.svg"/> {{uvIndexLabel(item)}}
+          </div>
+        </div>
+        <div class="weatherForecastItemInfo">
+          <div class="weatherForecastItemInfoHumidity">
+            <img src="/static/humidity.svg"/> {{item.humidity}}%
+          </div>
+        </div>
         <div class="weatherForecastItemInfo">
           <div class="weatherForecastItemInfoRain">
             <svg viewBox="0 0 512 512">
@@ -69,7 +80,11 @@
           {{qpfMm(item).toFixed(1)}}<small>mm</small> {{item.pop}}%
         </div>
         <span class="weatherForecastItemInfo" v-if="item.snow.metric !== '0'">Snow: {{item.snow.metric}} <small>mm</small></span>
-        <span class="weatherForecastItemInfo">{{item.mslp.metric}} <small>hPa</small></span>
+        <span class="weatherForecastItemInfo">
+          <div class="weatherForecastItemInfoPressure">
+            <img src="/static/pressure.svg"/> {{item.mslp.metric}} <small>hPa</small>
+          </div>
+        </span>
       </li>
     </ul>
     <div style="white-space: pre">{{JSON.stringify(forecast, null, 8)}}</div>
@@ -179,6 +194,20 @@
     line-height: 2em;
   }
   .weatherForecastItemInfoCloudiness > img {
+    width: 2em;
+    vertical-align: bottom;
+  }
+  .weatherForecastItemInfoTemperature,
+  .weatherForecastItemInfoHumidity,
+  .weatherForecastItemInfoPressure,
+  .weatherForecastItemInfoUV {
+    line-height: 1.5em;
+  }
+  .weatherForecastItemInfoTemperature > img,
+  .weatherForecastItemInfoHumidity > img,
+  .weatherForecastItemInfoPressure > img,
+  .weatherForecastItemInfoUV > img {
+    height: 1.5em;
     width: 2em;
     vertical-align: bottom;
   }

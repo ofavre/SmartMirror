@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" viewBox="0 0 16 16">
+  <g transform="translate(-65.001757,-306.36911)">
+    <path
+       sodipodi:type="star"
+       style="fill:none;stroke:#FFF;stroke-width:18.66349602;stroke-linecap:round;stroke-linejoin:round;"
+       sodipodi:sides="10"
+       sodipodi:cx="190"
+       sodipodi:cy="191.6479"
+       sodipodi:r1="125.7224"
+       sodipodi:r2="107.37015"
+       sodipodi:arg1="-1.5821595"
+       sodipodi:arg2="-1.269964"
+       d="m 188.57143,65.933623 33.24398,23.166106 40.92185,0.0035 13.27825,38.282101 33.10442,24.05608 -11.75932,38.77563 12.64223,38.92007 -32.30523,24.45819 -12.64887,38.91791 -40.51164,0.79855 -33.10853,24.05043 -33.24398,-23.1661 -40.92185,-0.003 -13.27825,-38.2821 -33.104422,-24.05608 11.759319,-38.77563 -12.642226,-38.92007 32.305229,-24.45819 12.64887,-38.917911 40.51164,-0.798552 z"
+       transform="matrix(0.05358053,0,0,0.05358053,62.821456,304.10051)" />
+    <path
+       style="fill:none;stroke:#FFF;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;"
+       d="m 69.251768,312.61621 0,2.82259 c 0,0 -0.01894,1.55337 1.534429,1.55337 1.553373,0 1.553373,-1.55337 1.553373,-1.55337 l 0,-2.82259" />
+    <path
+       style="fill:none;stroke:#FFF;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;"
+       d="m 73.66562,312.61621 1.909545,4.37596 1.879171,-4.37596" />
+  </g>
+</svg>
