@@ -20,6 +20,7 @@
         />
       </defs>
     </svg>
+    <canvas id="chartId" height="30"></canvas>
     <ul class="weatherForecast" v-if="forecast !== null">
       <li class="weatherForecastItem" v-for="(item, index) in forecast.hourly_forecast" :key="index">
         <div class="weatherForecastItemInfo">
@@ -101,6 +102,7 @@
 <script>
   import config from '@/config';
   import 'weather-underground-icons/dist/wu-icons-style.min.css';
+  import Chart from 'chart.js';
 
   const OWMApiKey = config.OWMApiKey;
   const WUApiKey = config.WUApiKey;
@@ -117,6 +119,7 @@
       return {
         latitude: null,
         longitude: null,
+        chart: null,
       };
     },
     asyncComputed: {
@@ -139,8 +142,66 @@
         this.latitude = position.coords.latitude;
         this.longitude = position.coords.longitude;
       });
+      this.chart = new Chart('chartId', {
+        type: 'line',
+        data: {},
+        options: {
+          layout: {
+            padding: 10,
+          },
+          legend: {
+            display: false,
+          },
+          tooltips: {
+            enabled: false,
+          },
+          elements: {
+            point: {
+              radius: 0,
+              hitRadius: 0,
+              hoverRadius: 0,
+            },
+          },
+        },
+      });
+    },
+    watch: {
+      forecast(forecast) {
+        const hours = forecast.hourly_forecast.map(item => `${item.FCTTIME.hour}h`);
+        const temps = forecast.hourly_forecast.map(item => parseFloat(item.temp.metric));
+        const max = Math.max(...temps);
+        const min = Math.min(...temps);
+        const color = this.chart.ctx.createLinearGradient(
+          0, 0, 0, this.chart.ctx.canvas.height * 0.75);
+        for (let diff = max - min, i = diff; i >= 0; i -= 1) {
+          color.addColorStop(i / diff, this.tempToColor(max - i));
+        }
+        this.chart.data.labels = hours;
+        this.chart.data.datasets = [{
+          fill: false,
+          label: 'Temp',
+          data: temps,
+          borderColor: color,
+        }];
+        this.chart.update();
+      },
     },
     methods: {
+      scale(value, zero, one) {
+        const min = Math.min(zero, one);
+        const max = Math.max(zero, one);
+        const clamped = Math.min(max, Math.max(min, value));
+        return (clamped - zero) / (one - zero);
+      },
+      tempToColor(temp) {
+        const redHot = 30;
+        const blueCold = 5;
+        const whiteCold = -10;
+        if (temp <= blueCold) {
+          return `hsla(240, 100%, ${Math.round(50 + (50 * this.scale(temp, blueCold, whiteCold)))}%, 1)`;
+        }
+        return `hsla(${Math.round(240 * this.scale(temp, redHot, blueCold))}, 100%, 50%, 1)`;
+      },
       windStyle(item) {
         const maxSpeed = 30;
         const scale = item.wspd.metric / maxSpeed;
