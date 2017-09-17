@@ -66,7 +66,7 @@
                 fill="#FFFFFF" fill-opacity="1"/>
             </svg>
           </div>
-          {{item.qpf.metric}}<small>mm</small> {{item.pop}}%
+          {{qpfMm(item).toFixed(1)}}<small>mm</small> {{item.pop}}%
         </div>
         <span class="weatherForecastItemInfo" v-if="item.snow.metric !== '0'">Snow: {{item.snow.metric}} <small>mm</small></span>
         <span class="weatherForecastItemInfo">{{item.mslp.metric}} <small>hPa</small></span>
@@ -138,11 +138,13 @@
           ].join(' '),
         };
       },
-      rainScale(item) {
+      qpfMm(item) {
         const mmPerIn = 25.4;
-        const qpfMm = item.qpf.english * mmPerIn; // use the english metric as it is more accurate
+        return item.qpf.english * mmPerIn; // use the english metric as it is more accurate
+      },
+      rainScale(item) {
         const maxMm = 3;
-        return qpfMm / maxMm;
+        return this.qpfMm(item) / maxMm;
       },
       uvIndexLabel(item) {
         const uvi = parseInt(item.uvi, 10);
