@@ -22,9 +22,45 @@
     </svg>
     <ul class="weatherForecast" v-if="forecast !== null">
       <li class="weatherForecastItem" v-for="(item, index) in forecast.hourly_forecast" :key="index">
-        <span class="weatherForecastItemInfo"><i :class="['wu', 'wu-white', 'wu-64', 'wu-'+item.icon]"></i></span>
-        <span class="weatherForecastItemInfo">{{item.condition}}</span>
-        <span class="weatherForecastItemInfo">{{item.FCTTIME.hour}}h</span>
+        <div class="weatherForecastItemInfo">
+          <div class="weatherForecastItemInfoTime">
+            {{item.FCTTIME.hour}}h
+          </div>
+        </div>
+        <!--div class="weatherForecastItemInfo">{{item.condition}}</div-->
+        <div class="weatherForecastItemInfo">
+          <div class="weatherForecastItemInfoIcon">
+            <i :class="['wu', 'wu-white', 'wu-64', 'wu-'+item.icon]"></i>
+          </div>
+        </div>
+        <div class="weatherForecastItemInfo">
+          <div class="weatherForecastItemInfoWind">
+            <img src="/static/winds-symbol.svg" :style="windStyle(item)"/>
+          </div>
+          {{item.wspd.metric}} <sup>km</sup>/<sub>h</sub>
+        </div>
+        <div class="weatherForecastItemInfo">
+          <div class="weatherForecastItemInfoRain">
+            <svg viewBox="0 0 512 512">
+              <defs>
+                <clipPath :id="`precipitations-${index}-down`">
+                  <rect x="0" :y="512 - rainScale(item) * 512" width="512" height="512"/>
+                </clipPath>
+                <clipPath :id="`precipitations-${index}-up`">
+                  <rect x="0" :y="0 - rainScale(item) * 512" width="512" height="512"/>
+                </clipPath>
+              </defs>
+              <use href="#drop-filled"
+                   fill="#3390FF"
+                   :clip-path="`url(#precipitations-${index}-down)`"
+              />
+              <use href="#drop-contour"
+                   :clip-path="`url(#precipitations-${index}-up)`"
+                   fill="#FFFFFF" fill-opacity="1"/>
+            </svg>
+          </div>
+          {{qpfMm(item).toFixed(1)}}<small>mm</small> {{item.pop}}%
+        </div>
         <div class="weatherForecastItemInfo">
           <div class="weatherForecastItemInfoTemperature">
             <img src="/static/temperature.svg"/>
@@ -42,12 +78,6 @@
           </div>
         </div>
         <div class="weatherForecastItemInfo">
-          <div class="weatherForecastItemInfoWind">
-            <img src="/static/winds-symbol.svg" :style="windStyle(item)"/>
-          </div>
-          {{item.wspd.metric}} <sup>km</sup>/<sub>h</sub>
-        </div>
-        <div class="weatherForecastItemInfo">
           <div class="weatherForecastItemInfoUV">
             <img src="/static/uv.svg"/> {{uvIndexLabel(item)}}
           </div>
@@ -57,37 +87,14 @@
             <img src="/static/humidity.svg"/> {{item.humidity}}%
           </div>
         </div>
+        <div class="weatherForecastItemInfo" v-if="item.snow.metric !== '0'">Snow: {{item.snow.metric}} <small>mm</small></div>
         <div class="weatherForecastItemInfo">
-          <div class="weatherForecastItemInfoRain">
-            <svg viewBox="0 0 512 512">
-              <defs>
-                <clipPath :id="`precipitations-${index}-down`">
-                  <rect x="0" :y="512 - rainScale(item) * 512" width="512" height="512"/>
-                </clipPath>
-                <clipPath :id="`precipitations-${index}-up`">
-                  <rect x="0" :y="0 - rainScale(item) * 512" width="512" height="512"/>
-                </clipPath>
-              </defs>
-              <use href="#drop-filled"
-                fill="#3390FF"
-                :clip-path="`url(#precipitations-${index}-down)`"
-              />
-              <use href="#drop-contour"
-                :clip-path="`url(#precipitations-${index}-up)`"
-                fill="#FFFFFF" fill-opacity="1"/>
-            </svg>
-          </div>
-          {{qpfMm(item).toFixed(1)}}<small>mm</small> {{item.pop}}%
-        </div>
-        <span class="weatherForecastItemInfo" v-if="item.snow.metric !== '0'">Snow: {{item.snow.metric}} <small>mm</small></span>
-        <span class="weatherForecastItemInfo">
           <div class="weatherForecastItemInfoPressure">
             <img src="/static/pressure.svg"/> {{item.mslp.metric}} <small>hPa</small>
           </div>
-        </span>
+        </div>
       </li>
     </ul>
-    <div style="white-space: pre">{{JSON.stringify(forecast, null, 8)}}</div>
   </div>
 </template>
 
@@ -175,11 +182,19 @@
 
 <style>
   .weatherForecast .weatherForecastItem {
-    display: inline-flex;
-    flex-direction: column;
-    min-width: 15em;
+    width: 8em;
+    margin: 1em;
+    display: inline-block;
   }
   .weatherForecastItemInfo {
+    margin: 0.2em 0;
+  }
+  .weatherForecastItemInfoTime {
+    font-weight: bold;
+  }
+  .weatherForecastItemInfoTime,
+  .weatherForecastItemInfoIcon {
+    text-align: center;
   }
   .weatherForecastItemInfoWind {
     vertical-align: middle;
