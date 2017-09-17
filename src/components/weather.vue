@@ -33,7 +33,11 @@
             {{item.feelslike.metric}}&deg;C <small>({{item.temp.metric}}&deg;C)</small>
           </template>
         </span>
-        <span class="weatherForecastItemInfo">sky {{item.sky}}%</span>
+        <div class="weatherForecastItemInfo">
+          <div class="weatherForecastItemInfoCloudiness">
+            <img src="/static/cloud-filled.svg" :style="{opacity: parseFloat(item.sky)/100.}"/> {{item.sky}}%
+          </div>
+        </div>
         <div class="weatherForecastItemInfo">
           <div class="weatherForecastItemInfoWind">
             <img src="/static/winds-symbol.svg" :style="windStyle(item)"/>
@@ -168,6 +172,13 @@
   }
   .weatherForecastItemInfoWind > img {
     width: 100%;
+  }
+  .weatherForecastItemInfoCloudiness {
+    line-height: 2em;
+  }
+  .weatherForecastItemInfoCloudiness > img {
+    width: 2em;
+    vertical-align: bottom;
   }
   .weatherForecastItemInfoRain {
     vertical-align: middle;
