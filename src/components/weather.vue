@@ -126,18 +126,10 @@
         }
         if (Math.random() >= 0) {
           return fetch(`https://api.wunderground.com/api/${WUApiKey}/hourly/lang:${navigator.language.replace(/-.*/, '').toUpperCase()}/q/${this.latitude},${this.longitude}.json`)
-            .then(response => response.json())
-            .then((response) => {
-              console.log(response);
-              return response;
-            });
+            .then(response => response.json());
         } else if (Math.random() >= 0) {
           return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${this.latitude}&lon=${this.longitude}&appid=${OWMApiKey}`)
-            .then(response => response.json())
-            .then((response) => {
-              console.log(response);
-              return response;
-            });
+            .then(response => response.json());
         }
         return null;
       },
