@@ -21,6 +21,7 @@
       </defs>
     </svg>
     <canvas id="chartTemp" height="30"></canvas>
+    <canvas id="chartRain" height="30"></canvas>
     <ul class="weatherForecast" v-if="forecast !== null">
       <li class="weatherForecastItem" v-for="(item, index) in forecast.hourly_forecast" :key="index">
         <div class="weatherForecastItemInfo">
@@ -60,7 +61,7 @@
                    fill="#FFFFFF" fill-opacity="1"/>
             </svg>
           </div>
-          {{qpfMm(item).toFixed(1)}}<small>mm</small> {{item.pop}}%
+          {{qpfMmLabel(item)}}<small>mm</small> {{item.pop}}%
         </div>
         <div class="weatherForecastItemInfo">
           <div class="weatherForecastItemInfoTemperature">
@@ -106,6 +107,7 @@
 
   const OWMApiKey = config.OWMApiKey;
   const WUApiKey = config.WUApiKey;
+  const rainMaxMm = config.rainMaxMm;
 
   export default {
     name: 'weather',
@@ -120,6 +122,7 @@
         latitude: null,
         longitude: null,
         chartTemp: null,
+        chartRain: null,
       };
     },
     asyncComputed: {
@@ -143,9 +146,47 @@
         this.longitude = position.coords.longitude;
       });
       this.chartTemp = new Chart('chartTemp', {
-        type: 'line',
+        type: 'bar',
         data: {},
         options: {
+          legend: {
+            display: false,
+          },
+          tooltips: {
+            enabled: false,
+          },
+          elements: {
+            point: {
+              radius: 0,
+              hitRadius: 0,
+              hoverRadius: 0,
+            },
+          },
+        },
+      });
+      this.chartRain = new Chart('chartRain', {
+        type: 'bar',
+        data: {},
+        options: {
+          scales: {
+            yAxes: [{
+              id: 'qpf',
+              position: 'left',
+              ticks: {
+                min: 0,
+                suggestedMax: rainMaxMm,
+                stepSize: 0.5,
+              },
+            }, {
+              id: 'pop',
+              position: 'right',
+              display: false,
+              ticks: {
+                min: 0,
+                max: 100,
+              },
+            }],
+          },
           layout: {
             padding: 10,
           },
@@ -168,22 +209,45 @@
     watch: {
       forecast(forecast) {
         const hours = forecast.hourly_forecast.map(item => `${item.FCTTIME.hour}h`);
-        const temps = forecast.hourly_forecast.map(item => parseFloat(item.temp.metric));
-        const max = Math.max(...temps);
-        const min = Math.min(...temps);
-        const color = this.chartTemp.ctx.createLinearGradient(
-          0, 0, 0, this.chartTemp.ctx.canvas.height * 0.75);
-        for (let diff = max - min, i = diff; i >= 0; i -= 1) {
-          color.addColorStop(i / diff, this.tempToColor(max - i));
+        {
+          const temps = forecast.hourly_forecast.map(item => parseFloat(item.temp.metric));
+          const max = Math.max(...temps);
+          const min = Math.min(...temps);
+          const color = this.chartTemp.ctx.createLinearGradient(
+            0, 0, 0, this.chartTemp.ctx.canvas.height * 0.75);
+          for (let diff = max - min, i = diff; i >= 0; i -= 1) {
+            color.addColorStop(i / diff, this.tempToColor(max - i));
+          }
+          this.chartTemp.data.labels = hours;
+          this.chartTemp.data.datasets = [{
+            fill: false,
+            type: 'line',
+            label: 'Temp',
+            data: temps,
+            borderColor: color,
+          }];
+          this.chartTemp.update();
         }
-        this.chartTemp.data.labels = hours;
-        this.chartTemp.data.datasets = [{
-          fill: false,
-          label: 'Temp',
-          data: temps,
-          borderColor: color,
-        }];
-        this.chartTemp.update();
+        {
+          const qpf = forecast.hourly_forecast.map(item => this.qpfMm(item));
+          const pop = forecast.hourly_forecast.map(item => parseInt(item.pop, 10));
+          this.chartRain.data.labels = hours;
+          this.chartRain.data.datasets = [{
+            type: 'line',
+            yAxisID: 'pop',
+            fill: true,
+            data: pop,
+            borderColor: 'rgba(255, 255, 255, .6)',
+            backgroundColor: 'rgba(0, 0, 0, .3)',
+          }, {
+            type: 'bar',
+            yAxisID: 'qpf',
+            label: 'Quantity (mm)',
+            data: qpf,
+            backgroundColor: '#3390FF',
+          }];
+          this.chartRain.update();
+        }
       },
     },
     methods: {
@@ -215,10 +279,16 @@
       },
       qpfMm(item) {
         const mmPerIn = 25.4;
-        return item.qpf.english * mmPerIn; // use the english metric as it is more accurate
+        const mm = item.qpf.english * mmPerIn; // use the english metric as it is more accurate
+        if (mm === 0 && item.pop !== '0') return 0.05;
+        return mm;
+      },
+      qpfMmLabel(item) {
+        const mm = this.qpfMm(item);
+        return mm > 0 && mm < 0.1 ? '< 0.1' : mm.toFixed(1);
       },
       rainScale(item) {
-        const maxMm = 3;
+        const maxMm = rainMaxMm;
         return this.qpfMm(item) / maxMm;
       },
       uvIndexLabel(item) {
