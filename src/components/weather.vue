@@ -20,7 +20,7 @@
         />
       </defs>
     </svg>
-    <canvas id="chartId" height="30"></canvas>
+    <canvas id="chartTemp" height="30"></canvas>
     <ul class="weatherForecast" v-if="forecast !== null">
       <li class="weatherForecastItem" v-for="(item, index) in forecast.hourly_forecast" :key="index">
         <div class="weatherForecastItemInfo">
@@ -119,7 +119,7 @@
       return {
         latitude: null,
         longitude: null,
-        chart: null,
+        chartTemp: null,
       };
     },
     asyncComputed: {
@@ -142,7 +142,7 @@
         this.latitude = position.coords.latitude;
         this.longitude = position.coords.longitude;
       });
-      this.chart = new Chart('chartId', {
+      this.chartTemp = new Chart('chartTemp', {
         type: 'line',
         data: {},
         options: {
@@ -171,19 +171,19 @@
         const temps = forecast.hourly_forecast.map(item => parseFloat(item.temp.metric));
         const max = Math.max(...temps);
         const min = Math.min(...temps);
-        const color = this.chart.ctx.createLinearGradient(
-          0, 0, 0, this.chart.ctx.canvas.height * 0.75);
+        const color = this.chartTemp.ctx.createLinearGradient(
+          0, 0, 0, this.chartTemp.ctx.canvas.height * 0.75);
         for (let diff = max - min, i = diff; i >= 0; i -= 1) {
           color.addColorStop(i / diff, this.tempToColor(max - i));
         }
-        this.chart.data.labels = hours;
-        this.chart.data.datasets = [{
+        this.chartTemp.data.labels = hours;
+        this.chartTemp.data.datasets = [{
           fill: false,
           label: 'Temp',
           data: temps,
           borderColor: color,
         }];
-        this.chart.update();
+        this.chartTemp.update();
       },
     },
     methods: {
