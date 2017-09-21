@@ -108,6 +108,10 @@
   import config from '@/config';
   import 'weather-underground-icons/dist/wu-icons-style.min.css';
   import Chart from 'chart.js';
+  import 'chartjs-plugin-datalabels';
+
+  // Disable datalabels globally, just in case
+  Chart.defaults.global.plugins.datalabels.display = false;
 
   const OWMApiKey = config.OWMApiKey;
   const WUApiKey = config.WUApiKey;
@@ -154,6 +158,12 @@
         data: {},
         options: {
           maintainAspectRatio: false,
+          scales: {
+            yAxes: [{
+              id: 'temp',
+              display: false,
+            }],
+          },
           legend: {
             display: false,
           },
@@ -167,11 +177,23 @@
               hoverRadius: 0,
             },
           },
+          layout: {
+            padding: {
+              top: 10, // margin for top datalabels
+            },
+          },
+          plugins: {
+            datalabels: {
+              display: true,
+              color: 'white',
+              align: 'end',
+              offset: 0,
+            },
+          },
         },
         plugins: [{
           beforeRender: (chart) => {
             if (chart.config.data.datasets[0]) {
-              console.log(chart);
               const dsMeta = chart.getDatasetMeta(0);
               const dataset = dsMeta.controller.chart.config.data.datasets[0];
               const color = this.chartTemp.ctx.createLinearGradient(0, 0, chart.width, 0);
@@ -194,6 +216,7 @@
             yAxes: [{
               id: 'qpf',
               position: 'left',
+              display: false,
               ticks: {
                 min: 0,
                 suggestedMax: rainMaxMm,
@@ -208,9 +231,17 @@
                 max: 100,
               },
             }],
+            xAxes: [{
+              id: 'time',
+              gridLines: {
+                tickMarkLength: 20, // (default 10) extra margin for bottom labels
+              },
+            }],
           },
           layout: {
-            padding: 10,
+            padding: {
+              top: 16, // margin for top datalabels
+            },
           },
           legend: {
             display: false,
@@ -237,6 +268,7 @@
           this.chartTemp.data.datasets = [{
             fill: false,
             type: 'line',
+            yAxisID: 'temp',
             label: 'Temp',
             data: temps,
           }];
@@ -248,17 +280,38 @@
           this.chartRain.data.labels = hours;
           this.chartRain.data.datasets = [{
             type: 'line',
+            xAxisID: 'time',
             yAxisID: 'pop',
             fill: true,
             data: pop,
-            borderColor: 'rgba(255, 255, 255, .6)',
-            backgroundColor: 'rgba(0, 0, 0, .3)',
+            borderColor: 'rgba(255, 255, 255, .4)',
+            backgroundColor: 'rgba(0, 0, 0, .0)',
+            datalabels: {
+              display: true,
+              color: 'white',
+              align: 'end',
+              offset: -2,
+              formatter: x => (x === 0 ? '' : `${x}%`),
+            },
           }, {
             type: 'bar',
+            xAxisID: 'time',
             yAxisID: 'qpf',
             label: 'Quantity (mm)',
             data: qpf,
-            backgroundColor: '#3390FF',
+            backgroundColor: 'hsl(213, 100%, 60%)',
+            datalabels: {
+              display: true,
+              color: 'hsl(213, 100%, 80%)',
+              anchor: 'start',
+              align: 'start',
+              offset: -2,
+              formatter: (x) => {
+                if (x === 0) return '';
+                if (x < 0.1) return '~';
+                return x;
+              },
+            },
           }];
           this.chartRain.update();
         }
