@@ -168,6 +168,22 @@
             },
           },
         },
+        plugins: [{
+          beforeRender: (chart) => {
+            if (chart.config.data.datasets[0]) {
+              console.log(chart);
+              const dsMeta = chart.getDatasetMeta(0);
+              const dataset = dsMeta.controller.chart.config.data.datasets[0];
+              const color = this.chartTemp.ctx.createLinearGradient(0, 0, chart.width, 0);
+              dsMeta.data.forEach((el, idx) => {
+                const pt = el.getCenterPoint();
+                color.addColorStop(pt.x / chart.width, this.tempToColor(dataset.data[idx]));
+              });
+              dataset.borderColor = color;
+              dsMeta.controller.update();
+            }
+          },
+        }],
       });
       this.chartRain = new Chart('chartRain', {
         type: 'bar',
@@ -217,20 +233,12 @@
         const hours = forecast.hourly_forecast.map(item => `${item.FCTTIME.hour}h`);
         {
           const temps = forecast.hourly_forecast.map(item => parseFloat(item.temp.metric));
-          const max = Math.max(...temps);
-          const min = Math.min(...temps);
-          const color = this.chartTemp.ctx.createLinearGradient(
-            0, 0, 0, this.chartTemp.ctx.canvas.height * 0.75);
-          for (let diff = max - min, i = diff; i >= 0; i -= 1) {
-            color.addColorStop(i / diff, this.tempToColor(max - i));
-          }
           this.chartTemp.data.labels = hours;
           this.chartTemp.data.datasets = [{
             fill: false,
             type: 'line',
             label: 'Temp',
             data: temps,
-            borderColor: color,
           }];
           this.chartTemp.update();
         }
