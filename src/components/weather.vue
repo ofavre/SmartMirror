@@ -20,8 +20,12 @@
         />
       </defs>
     </svg>
-    <canvas id="chartTemp" height="30"></canvas>
-    <canvas id="chartRain" height="30"></canvas>
+    <div class="chart-container chart-temp">
+      <canvas id="chartTemp"></canvas>
+    </div>
+    <div class="chart-container chart-rain">
+      <canvas id="chartRain"></canvas>
+    </div>
     <ul class="weatherForecast" v-if="forecast !== null">
       <li class="weatherForecastItem" v-for="(item, index) in forecast.hourly_forecast" :key="index">
         <div class="weatherForecastItemInfo">
@@ -149,6 +153,7 @@
         type: 'bar',
         data: {},
         options: {
+          maintainAspectRatio: false,
           legend: {
             display: false,
           },
@@ -168,6 +173,7 @@
         type: 'bar',
         data: {},
         options: {
+          maintainAspectRatio: false,
           scales: {
             yAxes: [{
               id: 'qpf',
@@ -304,6 +310,13 @@
 </script>
 
 <style>
+  .chart-container {
+    position: relative;
+  }
+  .chart-temp,
+  .chart-rain {
+    height: 150px;
+  }
   .weatherForecast .weatherForecastItem {
     width: 8em;
     margin: 1em;
