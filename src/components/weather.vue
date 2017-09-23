@@ -1,31 +1,31 @@
 <template>
   <div>
-    <ul class="weatherForecast" v-if="forecast !== null">
-      <li class="weatherForecastItem" v-for="(item, index) in forecast.hourly_forecast" :key="index">
-        <div class="weatherForecastItemInfo">
-          <div class="weatherForecastItemInfoTime">
+    <ul class="weather--forecast" v-if="forecast !== null">
+      <li class="weather--forecast-item" v-for="(item, index) in forecast.hourly_forecast" :key="index">
+        <div class="weather--forecast-item-info">
+          <div class="weather--forecast-item-info-time">
             {{item.FCTTIME.hour}}<small>h</small>
           </div>
         </div>
-        <div class="weatherForecastItemInfo">
-          <div class="weatherForecastItemInfoIcon">
+        <div class="weather--forecast-item-info">
+          <div class="weather--forecast-item-info-icon">
             <i :class="['wu', 'wu-white', 'wu-'+item.icon]"></i>
           </div>
         </div>
-        <div class="weatherForecastItemInfo">
-          <div class="weatherForecastItemInfoWind">
+        <div class="weather--forecast-item-info">
+          <div class="weather--forecast-item-info-wind">
             <img src="/static/winds-symbol.svg" :style="windStyle(item)"/>
           </div>
         </div>
       </li>
     </ul>
-    <div class="chart-container chart-temp">
+    <div class="weather--chart-container weather--chart-temp">
       <canvas id="chartTemp"></canvas>
     </div>
-    <div class="chart-container chart-rain">
+    <div class="weather--chart-container weather--chart-rain">
       <canvas id="chartRain"></canvas>
     </div>
-    <div class="chart-container chart-sky-air">
+    <div class="weather--chart-container weather--chart-sky-air">
       <canvas id="chartSkyAir"></canvas>
     </div>
   </div>
@@ -404,43 +404,43 @@
 </script>
 
 <style>
-  .chart-container {
+  .weather--chart-container {
     position: relative;
   }
-  .chart-temp {
+  .weather--chart-temp {
     height: 200px;
   }
-  .chart-sky-air {
+  .weather--chart-sky-air {
     height: 150px;
   }
-  .chart-rain {
+  .weather--chart-rain {
     height: 100px;
   }
-  .weatherForecast {
+  .weather--forecast {
     padding: 0 8px 0 14px;
     display: flex;
     flex-direction: row;
   }
-  .weatherForecast .weatherForecastItem {
+  .weather--forecast .weather--forecast-item {
     display: inline-block;
     flex-grow: 1;
   }
-  .weatherForecastItemInfoTime {
+  .weather--forecast-item-info-time {
     /*font-weight: bold;*/
   }
-  .weatherForecastItemInfoTime,
-  .weatherForecastItemInfoIcon,
-  .weatherForecastItemInfoWind {
+  .weather--forecast-item-info-time,
+  .weather--forecast-item-info-icon,
+  .weather--forecast-item-info-wind {
     text-align: center;
   }
-  .weatherForecastItemInfoWind {
+  .weather--forecast-item-info-wind {
     vertical-align: middle;
     display: inline-block;
   }
-  .weatherForecastItemInfoWind > img {
+  .weather--forecast-item-info-wind > img {
     width: 100%;
   }
-  .weatherForecastItemInfoIcon .wu {
+  .weather--forecast-item-info-icon .wu {
     width: 30px;
     height: 30px;
   }
