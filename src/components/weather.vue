@@ -172,7 +172,7 @@
                 display: false,
               },
               gridLines: {
-                tickMarkLength: 20, // (default 10) extra margin for bottom labels
+                tickMarkLength: 16, // (default 10) extra margin for bottom labels
               },
             }],
           },
@@ -376,22 +376,6 @@
         if (mm === 0 && item.pop !== '0') return 0.05;
         return mm;
       },
-      qpfMmLabel(item) {
-        const mm = this.qpfMm(item);
-        return mm > 0 && mm < 0.1 ? '< 0.1' : mm.toFixed(1);
-      },
-      rainScale(item) {
-        const maxMm = rainMaxMm;
-        return this.qpfMm(item) / maxMm;
-      },
-      uvIndexLabel(item) {
-        const uvi = parseInt(item.uvi, 10);
-        if (uvi <= 2) return 'Very Low';
-        if (uvi <= 4) return 'Low';
-        if (uvi <= 6) return 'Moderate';
-        if (uvi <= 9) return 'High';
-        return 'Very High';
-      },
     },
   };
 </script>
@@ -419,7 +403,7 @@
     flex-grow: 1;
   }
   .weather--forecast-item-info-time {
-    /*font-weight: bold;*/
+    font-weight: bold;
   }
   .weather--forecast-item-info-time,
   .weather--forecast-item-info-icon,
