@@ -26,6 +26,9 @@
     <div class="chart-container chart-rain">
       <canvas id="chartRain"></canvas>
     </div>
+    <div class="chart-container chart-sky-air">
+      <canvas id="chartSkyAir"></canvas>
+    </div>
     <ul class="weatherForecast" v-if="forecast !== null">
       <li class="weatherForecastItem" v-for="(item, index) in forecast.hourly_forecast" :key="index">
         <div class="weatherForecastItemInfo">
@@ -131,6 +134,7 @@
         longitude: null,
         chartTemp: null,
         chartRain: null,
+        chartSkyAir: null,
       };
     },
     asyncComputed: {
@@ -258,6 +262,48 @@
           },
         },
       });
+      this.chartSkyAir = new Chart('chartSkyAir', {
+        type: 'bar',
+        data: {},
+        options: {
+          maintainAspectRatio: false,
+          scales: {
+            yAxes: [{
+              id: 'pct',
+              position: 'left',
+              display: false,
+              ticks: {
+                min: 0,
+                max: 100,
+              },
+            }],
+            xAxes: [{
+              id: 'time',
+              gridLines: {
+                tickMarkLength: 20, // (default 10) extra margin for bottom labels
+              },
+            }],
+          },
+          layout: {
+            padding: {
+              top: 16, // margin for top datalabels
+            },
+          },
+          legend: {
+            display: false,
+          },
+          tooltips: {
+            enabled: false,
+          },
+          elements: {
+            point: {
+              radius: 0,
+              hitRadius: 0,
+              hoverRadius: 0,
+            },
+          },
+        },
+      });
     },
     watch: {
       forecast(forecast) {
@@ -282,6 +328,7 @@
             type: 'line',
             xAxisID: 'time',
             yAxisID: 'pop',
+            label: 'Rain chance',
             fill: true,
             data: pop,
             borderColor: 'rgba(255, 255, 255, .4)',
@@ -314,6 +361,44 @@
             },
           }];
           this.chartRain.update();
+        }
+        {
+          const sky = forecast.hourly_forecast.map(item => parseInt(item.sky, 10));
+          const hum = forecast.hourly_forecast.map(item => parseInt(item.humidity, 10));
+          this.chartSkyAir.data.labels = hours;
+          this.chartSkyAir.data.datasets = [{
+            type: 'line',
+            xAxisID: 'time',
+            yAxisID: 'pct',
+            label: 'Humidity',
+            fill: true,
+            data: hum,
+            borderColor: 'hsl(213, 100%, 60%)',
+            backgroundColor: 'rgba(0, 0, 0, .0)',
+            datalabels: {
+              display: true,
+              color: 'hsl(213, 100%, 80%)',
+              align: 'end',
+              offset: -2,
+              formatter: x => (x === 0 ? '' : `${x}%`),
+            },
+          }, {
+            type: 'bar',
+            xAxisID: 'time',
+            yAxisID: 'pct',
+            label: 'Cloudiness',
+            data: sky,
+            backgroundColor: 'rgba(256, 256, 256, .4)',
+            datalabels: {
+              display: true,
+              color: 'white',
+              anchor: 'start',
+              align: 'start',
+              offset: -2,
+              formatter: x => (x === 0 ? '' : `${x}%`),
+            },
+          }];
+          this.chartSkyAir.update();
         }
       },
     },
@@ -375,7 +460,8 @@
     position: relative;
   }
   .chart-temp,
-  .chart-rain {
+  .chart-rain,
+  .chart-sky-air {
     height: 150px;
   }
   .weatherForecast .weatherForecastItem {
