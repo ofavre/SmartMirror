@@ -40,7 +40,6 @@
   // Disable datalabels globally, just in case
   Chart.defaults.global.plugins.datalabels.display = false;
 
-  const OWMApiKey = config.OWMApiKey;
   const WUApiKey = config.WUApiKey;
   const rainMaxMm = config.rainMaxMm;
 
@@ -66,14 +65,8 @@
         if (this.latitude === null || this.longitude === null) {
           return null;
         }
-        if (Math.random() >= 0) {
-          return fetch(`https://api.wunderground.com/api/${WUApiKey}/hourly/lang:${navigator.language.replace(/-.*/, '').toUpperCase()}/q/${this.latitude},${this.longitude}.json`)
-            .then(response => response.json());
-        } else if (Math.random() >= 0) {
-          return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${this.latitude}&lon=${this.longitude}&appid=${OWMApiKey}`)
-            .then(response => response.json());
-        }
-        return null;
+        return fetch(`https://api.wunderground.com/api/${WUApiKey}/hourly/lang:${navigator.language.replace(/-.*/, '').toUpperCase()}/q/${this.latitude},${this.longitude}.json`)
+          .then(response => response.json());
       },
     },
     mounted() {
