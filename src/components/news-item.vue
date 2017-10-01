@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="news-item">
     <a class="no-decoration" :href="link" @click.prevent="openArticle">
       <v-card height="100%">
         <v-card-media :src="enclosureUrl" height="3em"></v-card-media>
@@ -91,6 +91,9 @@
 </script>
 
 <style>
+  .news-item {
+    display: inline;
+  }
   A.no-decoration {
     text-decoration: none;
   }
