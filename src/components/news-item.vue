@@ -1,24 +1,34 @@
 <template>
-  <a class="no-decoration" :href="link" @click.prevent="openArticle">
-    <v-card height="100%">
-      <v-card-media :src="enclosureUrl" height="3em"></v-card-media>
-      <v-card-title>
-        <div class="title news-item-title">{{title}}</div>
-        <div class="news-item-date">{{fromNow(pubDate)}}</div>
-      </v-card-title>
-      <v-card-text>
-        <div class="news-item-description">{{description}}</div>
-      </v-card-text>
-    </v-card>
-  </a>
+  <div>
+    <a class="no-decoration" :href="link" @click.prevent="openArticle">
+      <v-card height="100%">
+        <v-card-media :src="enclosureUrl" height="3em"></v-card-media>
+        <v-card-title>
+          <div class="title news-item-title">{{title}}</div>
+          <div class="news-item-date">{{fromNow(pubDate)}}</div>
+        </v-card-title>
+        <v-card-text>
+          <div class="news-item-description">{{description}}</div>
+        </v-card-text>
+      </v-card>
+    </a>
+    <news-reader ref="reader">
+      <h3 slot="title">{{readable ? readable.title : 'Loading…'}}</h3>
+      <div v-html="readable ? readable.content : 'Loading…'"></div>
+    </news-reader>
+  </div>
 </template>
 
 <script>
   import * as moment from 'moment';
   import readable from '@/readable';
+  import NewsReader from '@/components/news-reader';
 
   export default {
     name: 'news-item',
+    components: {
+      NewsReader,
+    },
     props: {
       item: {
         type: Element,
@@ -44,8 +54,17 @@
       this.pubDate = this.item.querySelector('pubDate').innerHTML;
     },
     methods: {
+      getReadable() {
+        if (!this.readable) {
+          return readable(this.link).then((json) => {
+            this.readable = json;
+            return json;
+          });
+        }
+        return Promise.resolve(this.readable);
+      },
       openArticle() {
-        readable(this.link).then(console.log);
+        return this.getReadable().then(this.$refs.reader.open);
         // {
         //   "title": "Angry Birds veut s’envoler en Bourse",
         //   "author": null,
