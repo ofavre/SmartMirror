@@ -5,6 +5,7 @@
   "author": "Olivier Favre <of.olivier.favre@gmail.com>",
   "private": true,
   "scripts": {
+    "cors": "node_modules/.bin/cors-proxy-server",
     "dev": "node build/dev-server.js",
     "start": "node build/dev-server.js",
     "build": "node build/build.js",
@@ -13,6 +14,7 @@
   "dependencies": {
     "chart.js": "^2.7.0",
     "chartjs-plugin-datalabels": "^0.1.0",
+    "cors-proxy-server": "^1.0.2",
     "moment": "^2.18.1",
     "vue": "^2.4.2",
     "vue-async-computed": "^3.3.1",
