@@ -115,7 +115,7 @@
   }
   .news-item-description {
     line-height: 1.1em;
-    max-height: 4em;
+    max-height: 4.3em;
     overflow-y: hidden;
   }
 </style>
