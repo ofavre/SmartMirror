@@ -365,9 +365,6 @@
             }],
             xAxes: [{
               id: 'time',
-              ticks: {
-                display: false,
-              },
               gridLines: {
                 tickMarkLength: 16, // (default 10) extra margin for bottom labels
               },
@@ -494,7 +491,7 @@
           this.chartSkyAir.update();
         }
         const days = forecast.forecast.simpleforecast.forecastday
-          .map(item => `${item.date.day}/${item.date.month}`);
+          .map(item => `${item.date.day}/${`0${item.date.month}`.substr(-2)}`);
         {
           const highs = forecast.forecast.simpleforecast.forecastday
             .map(item => parseFloat(item.high.celsius));
