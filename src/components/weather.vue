@@ -14,7 +14,7 @@
         </div>
         <div class="weather--forecast-item-info">
           <div class="weather--forecast-item-info-wind">
-            <img src="/static/winds-symbol.svg" :style="windStyle(item)"/>
+            <img src="/static/winds-symbol.svg" :style="windStyleHourly(item)"/>
           </div>
         </div>
       </li>
@@ -28,6 +28,25 @@
     <div class="weather--chart-container weather--chart-sky-air">
       <canvas id="chartSkyAir"></canvas>
     </div>
+    <ul class="weather--forecast" v-if="forecast !== null">
+      <li class="weather--forecast-item" v-for="(item, index) in forecast.forecast.simpleforecast.forecastday" :key="index">
+        <div class="weather--forecast-item-info">
+          <div class="weather--forecast-item-info-time">
+            {{item.date.day}}<small>/{{('0'+item.date.month).substr(-2)}}</small>
+          </div>
+        </div>
+        <div class="weather--forecast-item-info">
+          <div class="weather--forecast-item-info-icon">
+            <i :class="['wu', 'wu-white', 'wu-'+item.icon]"></i>
+          </div>
+        </div>
+        <div class="weather--forecast-item-info">
+          <div class="weather--forecast-item-info-wind">
+            <img src="/static/winds-symbol.svg" :style="windStyleDay(item)"/>
+          </div>
+        </div>
+      </li>
+    </ul>
     <div class="weather--chart-container weather--chart-10d-temp">
       <canvas id="chart10dTemp"></canvas>
     </div>
@@ -561,13 +580,24 @@
         }
         return `hsla(${Math.round(240 * this.scale(temp, redHot, blueCold))}, 100%, 50%, 1)`;
       },
-      windStyle(item) {
+      windStyleHourly(item) {
         const maxSpeed = 30;
         const scale = item.wspd.metric / maxSpeed;
         const rotateOffset = 90; // depends on the chosen icon
         return {
           transform: [
             `rotate(${parseFloat(item.wdir.degrees) + rotateOffset}deg)`,
+            `scale(${scale})`,
+          ].join(' '),
+        };
+      },
+      windStyleDay(item) {
+        const maxSpeed = 30;
+        const scale = item.avewind.kph / maxSpeed;
+        const rotateOffset = 90; // depends on the chosen icon
+        return {
+          transform: [
+            `rotate(${parseFloat(item.avewind.degrees) + rotateOffset}deg)`,
             `scale(${scale})`,
           ].join(' '),
         };
@@ -630,6 +660,7 @@
   }
   .weather--forecast-item-info-wind > img {
     width: 100%;
+    height: 50px;
   }
   .weather--forecast-item-info-icon .wu {
     width: 30px;
