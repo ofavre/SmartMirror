@@ -28,6 +28,9 @@
     <div class="weather--chart-container weather--chart-sky-air">
       <canvas id="chartSkyAir"></canvas>
     </div>
+    <div class="weather--chart-container weather--chart-10d-temp">
+      <canvas id="chart10dTemp"></canvas>
+    </div>
   </div>
 </template>
 
@@ -65,7 +68,7 @@
         if (this.latitude === null || this.longitude === null) {
           return null;
         }
-        return fetch(`https://api.wunderground.com/api/${WUApiKey}/hourly/lang:${navigator.language.replace(/-.*/, '').toUpperCase()}/q/${this.latitude},${this.longitude}.json`)
+        return fetch(`https://api.wunderground.com/api/${WUApiKey}/forecast10day/hourly/lang:${navigator.language.replace(/-.*/, '').toUpperCase()}/q/${this.latitude},${this.longitude}.json`)
           .then(response => response.json());
       },
     },
@@ -244,6 +247,76 @@
           },
         },
       });
+      this.chart10dTemp = new Chart('chart10dTemp', {
+        type: 'bar',
+        data: {},
+        options: {
+          maintainAspectRatio: false,
+          scales: {
+            yAxes: [{
+              id: 'temp',
+              display: false,
+            }],
+            xAxes: [{
+              id: 'time',
+              ticks: {
+                display: false,
+              },
+              gridLines: {
+                drawBorder: false,
+                drawTicks: false,
+                tickMarkLength: 0,
+              },
+            }],
+          },
+          legend: {
+            display: false,
+          },
+          tooltips: {
+            enabled: false,
+          },
+          elements: {
+            line: {
+              borderCapStyle: 'round',
+            },
+            point: {
+              radius: 0,
+              hitRadius: 0,
+              hoverRadius: 0,
+            },
+          },
+          layout: {
+            padding: {
+              top: 20, // margin for top datalabels
+            },
+          },
+          plugins: {
+            datalabels: {
+              display: true,
+              color: 'white',
+              align: 'end',
+              offset: 0,
+            },
+          },
+        },
+        plugins: [{
+          beforeRender: (chart) => {
+            [0, 1].forEach((i) => {
+              if (chart.config.data.datasets[i]) {
+                const dsMeta = chart.getDatasetMeta(i);
+                const dataset = dsMeta.controller.chart.config.data.datasets[i];
+                const color = this.chartTemp.ctx.createLinearGradient(0, 0, chart.width, 0);
+                dsMeta.data.forEach((el, idx) => {
+                  const pt = el.getCenterPoint();
+                  color.addColorStop(pt.x / chart.width, this.tempToColor(dataset.data[idx]));
+                });
+                dataset.borderColor = color;
+                dsMeta.controller.update();
+              }
+            });
+          },
+        }],
+      });
     },
     watch: {
       forecast(forecast) {
@@ -341,6 +414,31 @@
           }];
           this.chartSkyAir.update();
         }
+        const days = forecast.forecast.simpleforecast.forecastday
+          .map(item => `${item.date.day}/${item.date.month}`);
+        {
+          const highs = forecast.forecast.simpleforecast.forecastday
+            .map(item => parseFloat(item.high.celsius));
+          const lows = forecast.forecast.simpleforecast.forecastday
+            .map(item => parseFloat(item.low.celsius));
+          this.chart10dTemp.data.labels = days;
+          this.chart10dTemp.data.datasets = [{
+            fill: false,
+            type: 'line',
+            xAxisID: 'time',
+            yAxisID: 'temp',
+            label: 'High',
+            data: highs,
+          }, {
+            fill: false,
+            type: 'line',
+            xAxisID: 'time',
+            yAxisID: 'temp',
+            label: 'Low',
+            data: lows,
+          }];
+          this.chart10dTemp.update();
+        }
       },
     },
     methods: {
@@ -392,6 +490,9 @@
   }
   .weather--chart-rain {
     height: 100px;
+  }
+  .weather--chart-10d-temp {
+    height: 200px;
   }
   .weather--forecast {
     padding: 0 8px 0 14px;
