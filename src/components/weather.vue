@@ -28,6 +28,7 @@
     <div class="weather--chart-container weather--chart-sky-air">
       <canvas id="chartSkyAir"></canvas>
     </div>
+    <div class="weather--v-spacer"></div>
     <ul class="weather--forecast" v-if="forecast !== null">
       <li class="weather--forecast-item" v-for="(item, index) in forecast.forecast.simpleforecast.forecastday" :key="index">
         <div class="weather--forecast-item-info">
@@ -662,5 +663,8 @@
   .weather--forecast-item-info-icon .wu {
     width: 30px;
     height: 30px;
+  }
+  .weather--v-spacer {
+    height: 5em;
   }
 </style>
