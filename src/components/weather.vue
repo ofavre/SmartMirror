@@ -31,6 +31,9 @@
     <div class="weather--chart-container weather--chart-10d-temp">
       <canvas id="chart10dTemp"></canvas>
     </div>
+    <div class="weather--chart-container weather--chart-10d-rain">
+      <canvas id="chart10dRain"></canvas>
+    </div>
   </div>
 </template>
 
@@ -317,6 +320,63 @@
           },
         }],
       });
+      this.chart10dRain = new Chart('chart10dRain', {
+        type: 'bar',
+        data: {},
+        options: {
+          maintainAspectRatio: false,
+          scales: {
+            yAxes: [{
+              id: 'qpf',
+              position: 'left',
+              display: false,
+              ticks: {
+                min: 0,
+                suggestedMax: rainMaxMm,
+                stepSize: 0.5,
+              },
+            }, {
+              id: 'pop',
+              position: 'right',
+              display: false,
+              ticks: {
+                min: 0,
+                max: 100,
+              },
+            }],
+            xAxes: [{
+              id: 'time',
+              ticks: {
+                display: false,
+              },
+              gridLines: {
+                tickMarkLength: 16, // (default 10) extra margin for bottom labels
+              },
+            }],
+          },
+          layout: {
+            padding: {
+              top: 16, // margin for top datalabels
+            },
+          },
+          legend: {
+            display: false,
+          },
+          tooltips: {
+            enabled: false,
+          },
+          elements: {
+            line: {
+              borderCapStyle: 'round',
+            },
+            point: {
+              radius: 0,
+              hitRadius: 0,
+              hoverRadius: 0,
+            },
+          },
+        },
+      });
     },
     watch: {
       forecast(forecast) {
@@ -335,7 +395,7 @@
           this.chartTemp.update();
         }
         {
-          const qpf = forecast.hourly_forecast.map(item => this.qpfMm(item));
+          const qpf = forecast.hourly_forecast.map(item => this.qpfMmHourly(item));
           const pop = forecast.hourly_forecast.map(item => parseInt(item.pop, 10));
           this.chartRain.data.labels = hours;
           this.chartRain.data.datasets = [{
@@ -370,7 +430,7 @@
               formatter: (x) => {
                 if (x === 0) return '';
                 if (x < 0.1) return '~';
-                return x;
+                return x.toFixed(1);
               },
             },
           }];
@@ -439,6 +499,50 @@
           }];
           this.chart10dTemp.update();
         }
+        {
+          const qpf = forecast.forecast.simpleforecast.forecastday
+            .map(item => this.qpfMmDay(item));
+          const pop = forecast.forecast.simpleforecast.forecastday
+            .map(item => parseInt(item.pop, 10));
+          this.chart10dRain.data.labels = days;
+          this.chart10dRain.data.datasets = [{
+            type: 'line',
+            xAxisID: 'time',
+            yAxisID: 'pop',
+            label: 'Rain chance',
+            fill: true,
+            data: pop,
+            borderColor: 'rgba(255, 255, 255, .4)',
+            backgroundColor: 'rgba(0, 0, 0, .0)',
+            datalabels: {
+              display: true,
+              color: 'white',
+              align: 'end',
+              offset: -2,
+              formatter: x => (x === 0 ? '' : `${x}%`),
+            },
+          }, {
+            type: 'bar',
+            xAxisID: 'time',
+            yAxisID: 'qpf',
+            label: 'Quantity (mm)',
+            data: qpf,
+            backgroundColor: 'hsl(213, 100%, 60%)',
+            datalabels: {
+              display: true,
+              color: 'hsl(213, 100%, 80%)',
+              anchor: 'start',
+              align: 'start',
+              offset: -2,
+              formatter: (x) => {
+                if (x === 0) return '';
+                if (x < 0.1) return '~';
+                return x.toFixed(1);
+              },
+            },
+          }];
+          this.chart10dRain.update();
+        }
       },
     },
     methods: {
@@ -468,9 +572,15 @@
           ].join(' '),
         };
       },
-      qpfMm(item) {
+      qpfMmHourly(item) {
         const mmPerIn = 25.4;
         const mm = item.qpf.english * mmPerIn; // use the english metric as it is more accurate
+        if (mm === 0 && item.pop !== '0') return 0.05;
+        return mm;
+      },
+      qpfMmDay(item) {
+        const mmPerIn = 25.4;
+        const mm = item.qpf_allday.in * mmPerIn; // use the english metric as it is more accurate
         if (mm === 0 && item.pop !== '0') return 0.05;
         return mm;
       },
@@ -493,6 +603,9 @@
   }
   .weather--chart-10d-temp {
     height: 200px;
+  }
+  .weather--chart-10d-rain {
+    height: 100px;
   }
   .weather--forecast {
     padding: 0 8px 0 14px;
